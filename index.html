@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rust Launcher</title>
+</head>
+<body>
+  <h1>Rust Launcher</h1>
+
+  <h2>Ajouter un ami</h2>
+  <form id="addFriendForm">
+    <input type="text" id="friendName" placeholder="Nom de l'ami" required>
+    <button type="submit">Ajouter</button>
+  </form>
+
+  <h2>Envoyer un message</h2>
+  <form id="sendMessageForm">
+    <input type="text" id="from" placeholder="De" required>
+    <input type="text" id="to" placeholder="À" required>
+    <textarea id="content" placeholder="Message" required></textarea>
+    <button type="submit">Envoyer</button>
+  </form>
+
+  <h2>Messages</h2>
+  <ul id="messages"></ul>
+
+  <script>
+    const addFriendForm = document.getElementById('addFriendForm');
+    const sendMessageForm = document.getElementById('sendMessageForm');
+    const messagesList = document.getElementById('messages');
+
+    addFriendForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('friendName').value;
+      window.api.addFriend(name);
+    });
+
+    sendMessageForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const from = document.getElementById('from').value;
+      const to = document.getElementById('to').value;
+      const content = document.getElementById('content').value;
+      window.api.sendMessage({ from, to, content });
+    });
+
+    window.api.onNewMessage((event, message) => {
+      const li = document.createElement('li');
+      li.textContent = `${message.from} to ${message.to}: ${message.content}`;
+      messagesList.appendChild(li);
+    });
+
+    window.api.onError((event, error) => {
+      alert(`Erreur: ${error}`);
+    });
+  </script>
+</body>
+</html>
